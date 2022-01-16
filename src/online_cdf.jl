@@ -48,7 +48,6 @@ function update!(est::RunningCDFEstimator, x, w)
         new_idx = searchsortedlast(est.Xs, x) + 1
         splice!(est.Xs, new_idx:new_idx-1, [x])
         splice!(est.partial_Ws, new_idx:new_idx-1, [est.partial_Ws[new_idx-1]])
-        @show new_idx, est.Xs, est.partial_Ws
         est.partial_Ws[new_idx:end] = est.partial_Ws[new_idx:end] .+ w
     end
     est.last_i += 1
