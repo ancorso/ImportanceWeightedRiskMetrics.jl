@@ -63,8 +63,8 @@ function update!(est::RunningCDFEstimator, x, w)
             w_idx =  length(est.partial_Ws) - new_idx + 2
         else
             splice!(est.Xs, new_idx:new_idx-1, [x])
-            w_idx = length(est.partial_Ws) - new_idx + 1
-            splice!(est.partial_Ws, w_idx+1:w_idx, [est.partial_Ws[w_idx]])
+            w_idx = length(est.partial_Ws) - new_idx + 2
+            splice!(est.partial_Ws, w_idx:w_idx-1, [est.partial_Ws[w_idx-1]])
         end
         est.partial_Ws[w_idx:end] = est.partial_Ws[w_idx:end] .+ w
     end
