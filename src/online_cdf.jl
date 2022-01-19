@@ -11,11 +11,10 @@ RunningCDFEstimator() = RunningCDFEstimator([], [], 0)
 
 function RunningCDFEstimator(X::Vector{Float64}, W::Vector{Float64})
     # TODO: combine weights of duplicate entries in cost for efficiency
-    perm = sortperm(X)
+    perm = sortperm(X, rev=true)
     Xs = X[perm]
     Ws = W[perm]
-    partial_Ws = [sum(Ws[1:i]) for i=1:length(Ws)]
-    sumW = sum(W)
+    partial_Ws = cumsum(Ws)
     n = length(X)
 
     return RunningCDFEstimator(Xs, partial_Ws, n)
@@ -25,18 +24,24 @@ end
 CDF function
 """
 function cdf(est::RunningCDFEstimator, x)
-    idx = searchsortedlast(est.Xs, x)
-    if idx < 1
+    idx = searchsortedfirst(est.Xs, x)
+    if idx > est.last_i
         return 0.0
     else
-        return est.partial_Ws[idx] / last(est.partial_Ws)
+        return 1.0 - est.partial_Ws[idx] / est.last_i
     end
 end
 
 """
 Quantile function
 """
-quantile(est::RunningCDFEstimator, α::Float64) = est.Xs[searchsortedfirst(est.partial_Ws, (1 - α)*last(est.partial_Ws))]
+function quantile(est::RunningCDFEstimator, α::Float64)
+    idx = searchsortedlast(est.partial_Ws, α*est.last_i)
+    if idx < 1
+        idx = 1
+    end
+    return est.Xs[idx]
+end
 
 """
 Update function
