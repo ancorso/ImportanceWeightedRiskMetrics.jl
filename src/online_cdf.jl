@@ -55,11 +55,11 @@ Tail cost
 function tail_cost(est::RunningCDFEstimator, x)
     idx = searchsortedlast(est.Xs, x)
     if idx < 1
-        return 0.0
+        return last(est.partial_Xs) / est.last_i
     elseif idx > length(est.Xs)
-        return est.partial_Xs[1] / est.last_i
+        return 0.0
     else
-        return (est.partial_Xs[1] - est.partial_Xs[end - idx + 1]) / est.last_i
+        return (est.partial_Xs[end - idx + 1]) / est.last_i
     end
 end
 
