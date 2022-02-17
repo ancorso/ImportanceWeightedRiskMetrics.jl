@@ -3,6 +3,7 @@ Running cdf estimator
 """
 mutable struct RunningCDFEstimator
     Xs::Vector{Float64} # stored in increasing order for easy sorting
+    Ws::Vector{Float64} # stored in the corresponding order to Xs
     partial_Ws::Vector{Float64} # stored in reverse order cumsum for easy sorting (first entry corresponds to last Xs)
     partial_XWs::Vector{Float64} # stored in reverse order cumsum for easy sorting (first entry corresponds to last Xs)
     last_i::Int
@@ -19,10 +20,11 @@ function RunningCDFEstimator(X::Vector{Float64}, W::Vector{Float64})
     XWs = Xs .* Ws
     partial_XWs = cumsum(XWs)
     Xs = reverse(Xs)
+    Ws = reverse(Ws)
 
     n = length(X)
 
-    return RunningCDFEstimator(Xs, partial_Ws, partial_XWs, n)
+    return RunningCDFEstimator(Xs, Ws, partial_Ws, partial_XWs, n)
 end
 
 """
